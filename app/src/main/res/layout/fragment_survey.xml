@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".SurveyFragment">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="314dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="sans-serif-black"
+        android:text="@string/posterSurvey"
+        android:textAlignment="center"
+        android:textColor="#070707"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="TextView"
+        android:textColor="#050505"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/choices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/question"
+        android:layout_alignStart="@+id/question"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="30dp">
+
+        <RadioButton
+            android:id="@+id/poor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/poor"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#0B0A0A" />
+
+        <RadioButton
+            android:id="@+id/fair"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fair"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#0B0A0A" />
+
+        <RadioButton
+            android:id="@+id/good"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/good"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#0B0A0A" />
+
+        <RadioButton
+            android:id="@+id/veryGood"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/veryGood"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#0B0A0A" />
+
+        <RadioButton
+            android:id="@+id/superior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/superior"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#0B0A0A" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choices"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/next" />
+
+    <Button
+        android:id="@+id/finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/next"
+        android:layout_marginStart="251dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/finish" />
+
+</RelativeLayout>
