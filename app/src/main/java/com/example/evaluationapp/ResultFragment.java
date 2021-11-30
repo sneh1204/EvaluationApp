@@ -2,16 +2,14 @@ package com.example.evaluationapp;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.evaluationapp.databinding.FragmentResultBinding;
-import com.example.evaluationapp.model.User;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 
 public class ResultFragment extends Fragment {

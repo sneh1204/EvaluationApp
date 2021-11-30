@@ -1,7 +1,5 @@
-package com.example.evaluationapp.model;
+package com.example.evaluationapp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,13 +16,13 @@ public class Survey{
             "The team successfully explained the scope and results of their project in no more than 5 minutes."
     };
 
-     private Map<Integer, String> choices = new HashMap<Integer, String>() {{
-         put(0, "Poor");
-         put(1, "Fair");
-         put(2, "Good");
-         put(3, "Very Good");
-         put(4, "Superior");
-     }};
+    private Map<Integer, String> choices = new HashMap<Integer, String>() {{
+        put(0, "Poor");
+        put(1, "Fair");
+        put(2, "Good");
+        put(3, "Very Good");
+        put(4, "Superior");
+    }};
 
 
     public int getQuestionsListSize(){

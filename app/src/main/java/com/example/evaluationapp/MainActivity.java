@@ -14,8 +14,6 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.example.evaluationapp.model.User;
-
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;

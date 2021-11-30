@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.evaluationapp.databinding.FragmentLoginBinding;
-import com.example.evaluationapp.model.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

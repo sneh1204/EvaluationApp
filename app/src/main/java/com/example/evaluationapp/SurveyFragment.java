@@ -13,10 +13,6 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 
 import com.example.evaluationapp.databinding.FragmentSurveyBinding;
-import com.example.evaluationapp.model.Survey;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SurveyFragment extends Fragment {
 
