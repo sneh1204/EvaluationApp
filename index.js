@@ -1,10 +1,6 @@
 const express = require('express');
-
-//var jwt = require('express-jwt');
-//var jwks = require('jwks-rsa');
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-//const { auth } = require('express-oauth2-jwt-bearer');
 const {MongoClient, ObjectId} = require('mongodb');
 
 const app = express();
@@ -166,6 +162,7 @@ app.get("/teams/getAll", jwtVerificationMiddleware, async (req, res, next) => {
     return false;
   }
 
+  console.log(result);
   res.status(200).send(result);
 
 });
@@ -181,29 +178,19 @@ app.get("/profile/view", jwtVerificationMiddleware, async (req, res, next) => {
 
 });
 
+app.post("/update/teamscore", jwtVerificationMiddleware, async(req, res, next) => {
 
+  const fullname = req.body["fullname"];
+  const score = req.body["score"];
+  const team = req.body["team"];
+  const avgscore = req.body["avgscore"];
 
+  await teams_collection.updateOne({teamname: team}, {$push: { scores: {examinername: fullname , score:score} }});
+  await teams_collection.updateOne({teamname: team}, {$set: { avgscore: avgscore }});
 
-// // Authorization middleware. When used, the Access Token must
-// // exist and be verified against the Auth0 JSON Web Key Set.
-// const checkJwt = auth({
-//     audience: 'https://mysterious-beach-05426.herokuapp.com/auth/login',
-//     issuerBaseURL: `https://dev-9glxzlwm.us.auth0.com/`,
-//   });
+  res.status(200).send({status:"ok"});
 
-
-//   app.get('/api/public', function(req, res) {
-//     console.log("hello");
-//     res.json({
-//       message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'
-//     });
-//   });
-
-//   app.get('/api/private', checkJwt, function(req, res) {
-//     res.json({
-//       message: 'Hello from a private endpoint! You need to be authenticated to see this.'
-//     });
-//   });
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);  
