@@ -30,7 +30,8 @@ public class LoginFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(am.getUser() != null){
-            am.sendSurveyView();
+            //am.sendSurveyView();
+            am.sendTeamView();
         }
     }
 
@@ -42,8 +43,15 @@ public class LoginFragment extends Fragment {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        binding.emailTextFieldId.setText("s@s.com");
+        binding.emailTextFieldId.setText("b@b.com");
         binding.passwordTextFieldId.setText("test123");
+
+        binding.createNewAccountId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                am.sendRegisterView();
+            }
+        });
 
         binding.loginButtonId.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +73,8 @@ public class LoginFragment extends Fragment {
                         User user = gson.fromJson(response, User.class);
 
                         am.setUser(user);
-                        am.sendSurveyView();
+                        //am.sendSurveyView();
+                        am.sendTeamView();
                     }
 
                     @Override
@@ -106,7 +115,11 @@ public class LoginFragment extends Fragment {
 
         void login(MainActivity.Return response, String... data);
 
-        void sendSurveyView();
+        //void sendSurveyView();
+
+        void sendRegisterView();
+
+        void sendTeamView();
 
     }
 

@@ -14,11 +14,14 @@ import android.widget.RadioButton;
 
 import com.example.evaluationapp.databinding.FragmentSurveyBinding;
 
+import org.jetbrains.annotations.NotNull;
+
 public class SurveyFragment extends Fragment {
 
     FragmentSurveyBinding binding;
     ISurvey am;
     Survey surveyObject = new Survey();
+    User user;
 
     int questionNumber = 0;
     int total_score = 0;
@@ -40,7 +43,7 @@ public class SurveyFragment extends Fragment {
 
         binding = FragmentSurveyBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
+        user = am.getUser();
         listSize = surveyObject.getQuestionsListSize();
 
         updateQuestion();
@@ -106,6 +109,8 @@ public class SurveyFragment extends Fragment {
     }
 
     public interface ISurvey {
+        User getUser();
+        void update(com.example.evaluationapp.MainActivity.Return response, String ...data);
         void sendResultView(int total_score);
     }
 }

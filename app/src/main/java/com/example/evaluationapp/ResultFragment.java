@@ -3,10 +3,12 @@ package com.example.evaluationapp;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.evaluationapp.databinding.FragmentResultBinding;
+import com.google.android.material.navigation.NavigationBarView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -47,6 +49,13 @@ public class ResultFragment extends Fragment {
 
         binding.score.setText(String.valueOf(totalScore));
 
+        binding.goToTeams.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                am.sendTeamView();
+            }
+        });
+
         binding.logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,6 +80,7 @@ public class ResultFragment extends Fragment {
     public interface IResult {
         void setUser(User user);
         void sendLoginView();
+        void sendTeamView();
     }
 
 }

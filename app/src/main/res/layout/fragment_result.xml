@@ -49,8 +49,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textview1"
-        android:layout_marginStart="170dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="300dp"
+        android:layout_toEndOf="@+id/goToTeams"
         android:text="logout" />
+
+    <Button
+        android:id="@+id/goToTeams"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/score"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="51dp"
+        android:layout_marginTop="300dp"
+        android:text="Go to Teams" />
 
 </RelativeLayout>
