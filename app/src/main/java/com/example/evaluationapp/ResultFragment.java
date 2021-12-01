@@ -2,6 +2,7 @@ package com.example.evaluationapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,33 +10,29 @@ import android.view.ViewGroup;
 
 import com.example.evaluationapp.databinding.FragmentResultBinding;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 
 public class ResultFragment extends Fragment {
 
     FragmentResultBinding binding;
-    static final String ARG_PARAM_TOTALSCORE = "totalScore";
     IResult am;
 
-    int totalScore;
-
-    public static ResultFragment newInstance(int total_score) {
-        ResultFragment fragment = new ResultFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_PARAM_TOTALSCORE, total_score);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            totalScore = getArguments().getInt(ARG_PARAM_TOTALSCORE);
-        }
+
     }
 
     @Override
@@ -47,7 +44,38 @@ public class ResultFragment extends Fragment {
         binding = FragmentResultBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        binding.score.setText(String.valueOf(totalScore));
+        user = am.getUser();
+
+        binding.resultView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        binding.resultView.setLayoutManager(llm);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(binding.resultView.getContext(), llm.getOrientation());
+        binding.resultView.addItemDecoration(dividerItemDecoration);
+
+        am.getTeams(new MainActivity.Return() {
+            @Override
+            public void response(@NonNull String response) {
+
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                Teams[] teams = gson.fromJson(response, Teams[].class);
+
+                ArrayList<Teams> teamsArrayList = new ArrayList<>(Arrays.asList(teams));
+
+                binding.resultView.setAdapter(new ResultAdapter(user, teamsArrayList));
+            }
+
+            @Override
+            public boolean showDialog() {
+                return true;
+            }
+
+            @Override
+            public void error(@NonNull String response) {
+            }
+        });
+
 
         binding.goToTeams.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,9 +106,11 @@ public class ResultFragment extends Fragment {
     }
 
     public interface IResult {
+        User getUser();
         void setUser(User user);
         void sendLoginView();
         void sendTeamView();
+        void getTeams(MainActivity.Return response);
     }
 
 }

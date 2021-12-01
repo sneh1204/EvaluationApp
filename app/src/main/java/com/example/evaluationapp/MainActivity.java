@@ -87,9 +87,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
     }
 
     @Override
-    public void sendResultView(int total_score) {
+    public void sendResultView() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerLayout, ResultFragment.newInstance(total_score))
+                .replace(R.id.containerLayout, new ResultFragment())
                 .commit();
     }
 
@@ -139,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
         FormBody formBody = new FormBody.Builder()
                 .add("fullname", data[0])
                 .add("score", data[1])
+                .add("team", data[2])
+                .add("avgscore", data[3])
                 .build();
         Request request = new Request.Builder()
                 .url(BASE_URL + "update/teamscore")

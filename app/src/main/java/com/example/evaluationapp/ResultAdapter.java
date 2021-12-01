@@ -1,27 +1,26 @@
 package com.example.evaluationapp;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.evaluationapp.databinding.ResultViewBinding;
 import com.example.evaluationapp.databinding.TeamViewBinding;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.UViewHolder>{
+public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.UViewHolder>{
 
     ArrayList<Teams> teams;
-    TeamViewBinding binding;
+    ResultViewBinding binding;
     ViewGroup parent;
     User user;
 
-    public TeamsAdapter(User user, ArrayList<Teams> teams) {
+    public ResultAdapter(User user, ArrayList<Teams> teams) {
         this.teams = teams;
         this.user = user;
     }
@@ -29,7 +28,7 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.UViewHolder>
     @NonNull
     @Override
     public UViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        binding = TeamViewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        binding = ResultViewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         this.parent = parent;
         return new UViewHolder(binding);
     }
@@ -44,18 +43,7 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.UViewHolder>
 
         Teams team = teams.get(position);
         holder.binding.teamNameId.setText(team.getTeamname());
-
-        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                activity.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.containerLayout, SurveyFragment.newInstance(team))
-                        .commit();
-
-            }
-        });
-
+        holder.binding.scoreId.setText(String.valueOf(team.avgscore));
     }
     @Override
     public int getItemCount() {
@@ -65,9 +53,9 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.UViewHolder>
 
     public static class UViewHolder extends RecyclerView.ViewHolder {
 
-        TeamViewBinding binding;
+        ResultViewBinding binding;
 
-        public UViewHolder(@NonNull TeamViewBinding binding) {
+        public UViewHolder(@NonNull ResultViewBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

@@ -16,6 +16,8 @@ import com.example.evaluationapp.databinding.FragmentSurveyBinding;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 public class SurveyFragment extends Fragment {
 
     FragmentSurveyBinding binding;
@@ -27,13 +29,27 @@ public class SurveyFragment extends Fragment {
     int total_score = 0;
     String choice;
     static int listSize;
+    double teamAverageScore = 0;
 
+    static final String ARG_PARAM_TEAM = "team";
+    Teams team;
+
+    public static SurveyFragment newInstance(Teams team) {
+        SurveyFragment fragment = new SurveyFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_PARAM_TEAM, team);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
+        if (getArguments() != null) {
+            team = (Teams) getArguments().getSerializable(ARG_PARAM_TEAM);
+        }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,7 +83,26 @@ public class SurveyFragment extends Fragment {
                 RadioButton radioButton = binding.getRoot().findViewById(binding.choices.getCheckedRadioButtonId());
                 choice = radioButton.getText().toString();
                 updateScore(choice);
-                am.sendResultView(total_score);
+                calculateAverageScore(total_score);
+
+                am.update(new com.example.evaluationapp.MainActivity.Return() {
+                    @Override
+                    public void response(@NotNull String response) {
+                        Log.d("demo", "response: " + response);
+                        am.sendResultView();
+                    }
+
+                    @Override
+                    public boolean showDialog() {
+                        return true;
+                    }
+
+                    @Override
+                    public void error(@NotNull String response) {
+                    }
+
+                }, user.getFullname(), String.valueOf(total_score), team.getTeamname(), String.valueOf(teamAverageScore));
+
             }
         });
 
@@ -86,6 +121,19 @@ public class SurveyFragment extends Fragment {
         int score = surveyObject.getScoreValue(choice);
         total_score = total_score + score;
         Log.d("demo", "total Score : " + total_score);
+    }
+
+    public void calculateAverageScore(int total_score){
+        ArrayList<Scores> scoresArrayList = team.getScores();
+        int numOfEvaluations;
+        if(scoresArrayList == null){
+            numOfEvaluations = 1;
+        }else{
+            numOfEvaluations = scoresArrayList.size() + 1;
+        }
+
+        double averageScore = team.getAvgscore();
+        teamAverageScore = (averageScore + total_score)/ numOfEvaluations;
     }
 
     public void setButtonVisibility(){
@@ -111,6 +159,6 @@ public class SurveyFragment extends Fragment {
     public interface ISurvey {
         User getUser();
         void update(com.example.evaluationapp.MainActivity.Return response, String ...data);
-        void sendResultView(int total_score);
+        void sendResultView();
     }
 }

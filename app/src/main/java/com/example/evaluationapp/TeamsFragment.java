@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -92,6 +93,8 @@ public class TeamsFragment extends Fragment {
                 Teams[] teams = gson.fromJson(response, Teams[].class);
 
                 ArrayList<Teams> teamsArrayList = new ArrayList<>(Arrays.asList(teams));
+
+                Log.d("demo", "response: " + teamsArrayList);
 
                 binding.teamView.setAdapter(new TeamsAdapter(user, teamsArrayList));
             }
