@@ -101,7 +101,7 @@ public class SurveyFragment extends Fragment {
                     public void error(@NotNull String response) {
                     }
 
-                }, user.getFullname(), String.valueOf(total_score), team.getTeamname(), String.valueOf(teamAverageScore));
+                }, user.getFullname(), String.valueOf(total_score), team.getTeamname(),  String.format("%.2f", teamAverageScore));
 
             }
         });
