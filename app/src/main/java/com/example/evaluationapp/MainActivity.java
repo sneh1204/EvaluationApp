@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.ILogin, SurveyFragment.ISurvey, ResultFragment.IResult, RegisterFragment.IRegister, TeamsFragment.ITeams {
+public class MainActivity extends AppCompatActivity implements LoginFragment.ILogin, SurveyFragment.ISurvey, ResultFragment.IResult, RegisterFragment.IRegister, TeamsFragment.ITeams, AdminLoginFragment.IAdminLogin, RegisterAdminFragment.IAdminRegister, AdminPortalFragment.IAdminPortal, ExaminerFragment.IExaminer, TeamViewFragment.ITeamView, CreateExaminerFragment.ICreateExaminer, CreateTeamFragment.ICreateTeam{
 
     private final OkHttpClient client = new OkHttpClient();
     public static final String BASE_URL  = "http://10.0.2.2:3000/";//"https://aqueous-anchorage-82599.herokuapp.com/";
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
 
     ProgressDialog dialog;
     User user = null;
+    Admin admin = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +74,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
                 .commit();
     }
 
-    public void sendSurveyView(){
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerLayout, new SurveyFragment())
-                .commit();
-    }
 
     @Override
     public void sendRegisterView() {
@@ -90,6 +86,53 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
     public void sendResultView() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerLayout, new ResultFragment())
+                .commit();
+    }
+
+    public void sendAdminLoginView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerLayout, new AdminLoginFragment())
+                .commit();
+    }
+
+    @Override
+    public void sendAdminRegisterView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerLayout, new RegisterAdminFragment())
+                .commit();
+    }
+
+    @Override
+    public void sendAdminPortalView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerLayout, new AdminPortalFragment())
+                .commit();
+    }
+
+    @Override
+    public void sendExaminerView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerLayout, new ExaminerFragment())
+                .commit();
+    }
+    @Override
+    public void sendAdminsTeamView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerLayout, new TeamViewFragment())
+                .commit();
+    }
+
+    @Override
+    public void sendCreateExaminerView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerLayout, new CreateExaminerFragment())
+                .commit();
+    }
+
+    @Override
+    public void sendCreateTeamView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerLayout, new CreateTeamFragment())
                 .commit();
     }
 
@@ -122,20 +165,23 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
     public void getTeams(Return response) {
         Request request = new Request.Builder()
                 .url(BASE_URL + "teams/getAll")
-                .addHeader("x-jwt-token", user.getToken())
                 .build();
         sendRequest(request, response);
     }
 
-    public void profile(Return response){
+    public void profile(Return response, String... data){
+        FormBody formBody = new FormBody.Builder()
+                .add("email", data[0])
+                .build();
         Request request = new Request.Builder()
                 .url(BASE_URL + "profile/view")
-                .addHeader("x-jwt-token", user.getToken())
+                .post(formBody)
                 .build();
         sendRequest(request, response);
     }
 
     public void update(Return response, String ...data){
+        Log.d("demo", "update: " + data[0]);
         FormBody formBody = new FormBody.Builder()
                 .add("fullname", data[0])
                 .add("score", data[1])
@@ -144,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
                 .build();
         Request request = new Request.Builder()
                 .url(BASE_URL + "update/teamscore")
-                .addHeader("x-jwt-token", user.getToken())
                 .post(formBody)
                 .build();
         sendRequest(request, response);
@@ -186,6 +231,67 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
                 }
             }
         });
+    }
+
+    @Override
+    public void adminLogin(Return response, String... data) {
+        FormBody formBody = new FormBody.Builder()
+                .add("email", data[0])
+                .add("pass", data[1])
+                .build();
+        Request request = new Request.Builder()
+                .url(BASE_URL + "auth/adminlogin")
+                .post(formBody)
+                .build();
+        sendRequest(request, response);
+    }
+
+    @Override
+    public void adminRegister(Return response, String... data) {
+        FormBody formBody = new FormBody.Builder()
+                .add("fullname", data[0])
+                .add("email", data[1])
+                .add("pass", data[2])
+                .build();
+        Request request = new Request.Builder()
+                .url(BASE_URL + "auth/adminsignup")
+                .post(formBody)
+                .build();
+        sendRequest(request, response);
+    }
+
+    @Override
+    public void getExaminers(Return response) {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "examiners/getAll")
+                .build();
+        sendRequest(request, response);
+    }
+
+    @Override
+    public void registerTeam(Return response, String... data) {
+        FormBody formBody = new FormBody.Builder()
+                .add("teamname", data[0])
+                .add("city", data[1])
+                .add("participants", data[2])
+                .build();
+        Request request = new Request.Builder()
+                .url(BASE_URL + "register/team")
+                .post(formBody)
+                .build();
+        sendRequest(request, response);
+    }
+
+
+
+    @Override
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
+
+    @Override
+    public Admin getAdmin() {
+        return admin;
     }
 
     @Override

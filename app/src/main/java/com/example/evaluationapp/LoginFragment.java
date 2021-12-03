@@ -43,16 +43,6 @@ public class LoginFragment extends Fragment {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        binding.emailTextFieldId.setText("b@b.com");
-        binding.passwordTextFieldId.setText("test123");
-
-        binding.createNewAccountId.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                am.sendRegisterView();
-            }
-        });
-
         binding.loginButtonId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,6 +81,13 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        binding.adminPortalId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                am.sendAdminLoginView();
+            }
+        });
+
         return view;
     }
 
@@ -115,7 +112,7 @@ public class LoginFragment extends Fragment {
 
         void login(MainActivity.Return response, String... data);
 
-        //void sendSurveyView();
+        void sendAdminLoginView();
 
         void sendRegisterView();
 

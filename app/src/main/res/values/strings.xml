@@ -17,4 +17,6 @@
     <string name="password">Password</string>
     <string name="createAccount">Create New Account</string>
     <string name="login">Login</string>
+    <string name="com_auth0_domain">dev-9glxzlwm.us.auth0.com</string>
+    <string name="com_auth0_client_id">YQIIAQIYXOJ8t7aXeR362GZdMMnIfkzI</string>
 </resources>

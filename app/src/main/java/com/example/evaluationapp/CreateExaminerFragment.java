@@ -1,40 +1,49 @@
 package com.example.evaluationapp;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
+import android.telephony.SmsManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-import com.example.evaluationapp.databinding.FragmentRegisterBinding;
+import com.example.evaluationapp.databinding.FragmentCreateExaminerBinding;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
-public class RegisterFragment extends Fragment {
+public class CreateExaminerFragment extends Fragment {
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
+    FragmentCreateExaminerBinding binding;
 
-    FragmentRegisterBinding binding;
-
-    IRegister am;
+    ICreateExaminer am;
 
     String fullname, address, email, pass;
+
+    String phoneNo = "4124824112";
+    String message = "hello";
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof IRegister) {
-            am = (IRegister) context;
+        if (context instanceof ICreateExaminer) {
+            am = (ICreateExaminer) context;
         } else {
             throw new RuntimeException(context.toString());
         }
     }
 
-    public interface IRegister {
+    public interface ICreateExaminer {
 
         void setUser(User user);
 
@@ -42,9 +51,7 @@ public class RegisterFragment extends Fragment {
 
         void goBack();
 
-      //  void sendSurveyView();
-
-        void sendTeamView();
+        void sendExaminerView();
 
         void register(com.example.evaluationapp.MainActivity.Return response, String... data);
 
@@ -53,15 +60,15 @@ public class RegisterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle("Register");
+        getActivity().setTitle("Create Examiner");
 
-        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        binding = FragmentCreateExaminerBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
         binding.cancelButtonId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                am.goBack();
+                am.sendExaminerView();
             }
         });
 
@@ -86,8 +93,7 @@ public class RegisterFragment extends Fragment {
                         Gson gson = builder.create();
                         User user = gson.fromJson(response, User.class);
                         am.setUser(user);
-                       // am.sendSurveyView();
-                        am.sendTeamView();
+                        am.sendExaminerView();
                     }
 
                     @Override
@@ -103,13 +109,7 @@ public class RegisterFragment extends Fragment {
             }
         });
 
-        binding.cancelButtonId.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                am.goBack();
-            }
-        });
-
         return view;
     }
+
 }

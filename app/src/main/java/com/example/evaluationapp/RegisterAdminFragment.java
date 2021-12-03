@@ -2,60 +2,61 @@ package com.example.evaluationapp;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.evaluationapp.databinding.FragmentRegisterBinding;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.example.evaluationapp.databinding.FragmentRegisterAdminBinding;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
-public class RegisterFragment extends Fragment {
+public class RegisterAdminFragment extends Fragment {
 
-    FragmentRegisterBinding binding;
+    FragmentRegisterAdminBinding binding;
 
-    IRegister am;
+    IAdminRegister am;
 
-    String fullname, address, email, pass;
+    String fullname, email, pass;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof IRegister) {
-            am = (IRegister) context;
+        if (context instanceof IAdminRegister) {
+            am = (IAdminRegister) context;
         } else {
             throw new RuntimeException(context.toString());
         }
     }
 
-    public interface IRegister {
-
-        void setUser(User user);
-
-        void alert(String msg);
+    public interface IAdminRegister {
 
         void goBack();
 
-      //  void sendSurveyView();
+        void adminRegister(com.example.evaluationapp.MainActivity.Return response, String... data);
 
-        void sendTeamView();
+        void setAdmin(Admin admin);
 
-        void register(com.example.evaluationapp.MainActivity.Return response, String... data);
+        Admin getAdmin();
 
+        void alert(String msg);
+
+        void sendAdminPortalView();
+
+        void sendAdminLoginView();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle("Register");
+        getActivity().setTitle("AdminRegister");
 
-        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        binding = FragmentRegisterAdminBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
         binding.cancelButtonId.setOnClickListener(new View.OnClickListener() {
@@ -69,25 +70,23 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 fullname = binding.edittext.getText().toString();
-                address = binding.edittext4.getText().toString();
                 email = binding.edittext5.getText().toString();
                 pass = binding.edittext6.getText().toString();
 
-                if(email.isEmpty() || fullname.isEmpty() || address.isEmpty() || pass.isEmpty()){
+                if(email.isEmpty() || fullname.isEmpty() || pass.isEmpty()){
                     am.alert("Please enter all values for registering!");
                     return;
                 }
 
 
-                am.register(new MainActivity.Return() {
+                am.adminRegister(new MainActivity.Return() {
                     @Override
                     public void response(@NotNull String response) {
                         GsonBuilder builder = new GsonBuilder();
                         Gson gson = builder.create();
-                        User user = gson.fromJson(response, User.class);
-                        am.setUser(user);
-                       // am.sendSurveyView();
-                        am.sendTeamView();
+                        Admin admin = gson.fromJson(response, Admin.class);
+                        am.setAdmin(admin);
+                        am.sendAdminPortalView();
                     }
 
                     @Override
@@ -98,7 +97,7 @@ public class RegisterFragment extends Fragment {
                     @Override
                     public void error(@NotNull String response) {
                     }
-                }, fullname, address, email, pass);
+                }, fullname, email, pass);
 
             }
         });
@@ -106,7 +105,7 @@ public class RegisterFragment extends Fragment {
         binding.cancelButtonId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                am.goBack();
+                am.sendAdminLoginView();
             }
         });
 
