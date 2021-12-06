@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
+const { auth } = require('express-oauth2-jwt-bearer');
 const {MongoClient, ObjectId} = require('mongodb');
 
 const app = express();
@@ -24,6 +25,10 @@ client.connect(err => {
   admin_collection = client.db("survey").collection("admin");
 });
 
+const checkJwt = auth({
+  audience: 'YQIIAQIYXOJ8t7aXeR362GZdMMnIfkzI',
+  issuerBaseURL: 'https://dev-9glxzlwm.us.auth0.com/',
+})
 
 const fetchToken = (email, id) => {
   return jwt.sign(
@@ -121,15 +126,67 @@ const jwtVerificationMiddleware = async (req, res, next) => {
   }
 };
 
-app.post("/auth/login", authMiddleWare, (req, res, next) => {
-  if("cId" in req.body){
-    res.status(200).send({status: "ok", uid: req.body["uid"], token: fetchToken(req.body["email"], req.body["uid"]), cId: req.body["cId"], email: req.body["email"]});
-  }else{
-    res.status(200).send({status: "ok", uid: req.body["uid"], token: fetchToken(req.body["email"], req.body["uid"]), email: req.body["email"]});
-  }
+
+  app.post("/auth/login", (req, res, next) => {
+
+    const postData = req.body;
+
+    const email = postData.email;
+    const pass = postData.pass;
+
+
+    //Check exists email
+    auth_collection.find({"email": email}).count((error, number) =>{
+        if(error){
+            res.status(404).json({error: error})
+        }else{
+            if(number == 0){
+                console.log("Email not exists");
+                 res.status(401).json({error: "Email not exists"});
+            }else{
+
+              auth_collection.findOne({"email": email}, (error, user) => {
+      
+                    if(bcrypt.compareSync(pass, user.pass)){
+                        console.log("Login success");
+                        
+                        //create JWT token
+                        let token = jwt.sign({userId:user._id, email:user.email}, jwtSecret, {expiresIn: '1d'});
+                        //res.status(200).json({token: token})
+                        examiner_collection.findOne({email: req.body["email"]}, (error, user) => {
+                          if(error){
+                              res.status(404).json({error: "Examiner not found"});
+                      
+                          }else{
+                            console.log(user);
+                              const userJson = {
+                                  uid: user._id,
+                                  fullname: user.fullname,
+                                  address: user.address,
+                                  email: user.email,
+                      
+                              }
+                              //res.status(200).send(userJson);
+                              res.status(200).send({status: "ok", uid: user._id, token: token, fullname: user.fullname, address: user.address, email: user.email});
+                                    
+                          }
+                      })
+                        //res.status(200).send({status: "ok", uid: user._id, token: token, email: req.body["email"]});
+                        
+                    }else{
+                        console.log("Wrong Password");
+                         res.status(401).json({message: "Wrong Passord"});
+                    }
+                })
+
+            }
+        }
+        
+    })
+
 });
 
-app.post("/auth/signup", async (req, res, next) => {
+app.post("/auth/signup", checkJwt, async (req, res, next) => {
 
   if(!("email" in req.body) || !("pass" in req.body) || !("fullname") in req.body || !("address") in req.body){
     res.status(401).send({message: "Email/Pass/Fullname/Address is required to sign up!"});
@@ -147,10 +204,48 @@ app.post("/auth/signup", async (req, res, next) => {
       return;
     }
     await examiner_collection.insertOne({_id: sign_result.insertedId, email: req.body["email"], fullname: req.body["fullname"], address: req.body["address"]});
-    res.status(200).send({status: "ok", uid: sign_result.insertedId, token: fetchToken(req.body["email"], sign_result.insertedId), email: req.body["email"]});
+    res.status(200).send({status: "ok", uid: sign_result.insertedId, email: req.body["email"]});
 
 
   });
+
+});
+
+app.get("/examiners/getAll", checkJwt, async (req, res, next) => {
+
+  const cursor = examiner_collection.find({});
+  const result = await cursor.toArray();
+
+  if(result.length < 1){
+    res.status(400).send({message: "No Examiner found"});
+    return false;
+  }
+
+  console.log(result);
+  res.status(200).send(result);
+
+});
+
+app.post("/register/team", checkJwt, async (req, res, next) => {
+
+  if(!("teamname" in req.body) || !("city" in req.body) || !("participants") in req.body ){
+    res.status(401).send({message: "Teamname/City/Participants is required to sign up!"});
+    return;
+  }
+  teams_collection.find({"teamname": req.body["teamname"]}).count((error, number) =>{
+    if(error){
+        res.status(404).json({error: error})
+    }else{
+        if(number == 0){
+            console.log("Teamname not exists");
+            teams_collection.insertOne({teamname: req.body["teamname"], city: req.body["city"], participants: req.body["participants"]});
+            res.status(200).send({status: "ok"});
+        }else{
+          res.status(401).send({message: "Team name already exists"});
+        }
+    }
+    
+})
 
 });
 
@@ -169,14 +264,14 @@ app.get("/teams/getAll", async (req, res, next) => {
 
 });
 
-app.get("/profile/view", async (req, res, next) => {
-  // const profile = await profileCheck(res, req);
-  // if(profile === false) return;
+app.get("/profile/view", jwtVerificationMiddleware, async (req, res, next) => {
+  const profile = await profileCheck(res, req);
+  if(profile === false) return;
 
-  // const info = profile[0];
-  // info["uid"] = info["_id"]
+  const info = profile[0];
+  info["uid"] = info["_id"]
 
-  // res.status(200).send(info);
+  res.status(200).send(info);
 
   //get the user data 
   console.log(req.body["email"]);
@@ -214,11 +309,6 @@ app.post("/update/teamscore", async(req, res, next) => {
 
 });
 
-app.post("/auth/adminlogin", authMiddleWare, (req, res, next) => {
- 
-  res.status(200).send({status: "ok", uid: req.body["uid"], token: fetchToken(req.body["email"], req.body["uid"]), email: req.body["email"]});
-
-});
 
 app.post("/auth/adminsignup", async (req, res, next) => {
 
@@ -244,45 +334,6 @@ app.post("/auth/adminsignup", async (req, res, next) => {
   });
 
 });
-
-app.get("/examiners/getAll", async (req, res, next) => {
-
-  const cursor = examiner_collection.find({});
-  const result = await cursor.toArray();
-
-  if(result.length < 1){
-    res.status(400).send({message: "No Examiner found"});
-    return false;
-  }
-
-  console.log(result);
-  res.status(200).send(result);
-
-});
-
-app.post("/register/team", async (req, res, next) => {
-
-  if(!("teamname" in req.body) || !("city" in req.body) || !("participants") in req.body ){
-    res.status(401).send({message: "Teamname/City/Participants is required to sign up!"});
-    return;
-  }
-  teams_collection.find({"teamname": req.body["teamname"]}).count((error, number) =>{
-    if(error){
-        res.status(404).json({error: error})
-    }else{
-        if(number == 0){
-            console.log("Teamname not exists");
-            teams_collection.insertOne({teamname: req.body["teamname"], city: req.body["city"], participants: req.body["participants"]});
-            res.status(200).send({status: "ok"});
-        }else{
-          res.status(401).send({message: "Team name already exists"});
-        }
-    }
-    
-})
-
-});
-
 
 
 app.listen(port, () => {
