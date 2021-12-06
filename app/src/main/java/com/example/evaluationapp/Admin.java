@@ -17,6 +17,12 @@ public class Admin implements Serializable {
         this.email = email;
     }
 
+    public Admin(String fullname, String email, String token) {
+        this.token = token;
+        this.fullname = fullname;
+        this.email = email;
+    }
+
     public String getUid() {
         return uid;
     }

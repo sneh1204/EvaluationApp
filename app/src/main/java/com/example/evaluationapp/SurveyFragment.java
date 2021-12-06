@@ -60,6 +60,7 @@ public class SurveyFragment extends Fragment {
         binding = FragmentSurveyBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         user = am.getUser();
+        Log.d("demo", "onCreateView: " + user);
         listSize = surveyObject.getQuestionsListSize();
 
         updateQuestion();

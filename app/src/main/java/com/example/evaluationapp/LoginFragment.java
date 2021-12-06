@@ -65,6 +65,7 @@ public class LoginFragment extends Fragment {
                         am.setUser(user);
                         //am.sendSurveyView();
                         am.sendTeamView();
+                       // updateUserProfile(user.getToken());
                     }
 
                     @Override
@@ -91,7 +92,6 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -112,6 +112,8 @@ public class LoginFragment extends Fragment {
 
         void login(MainActivity.Return response, String... data);
 
+        void profile(MainActivity.Return response);
+
         void sendAdminLoginView();
 
         void sendRegisterView();
@@ -119,5 +121,7 @@ public class LoginFragment extends Fragment {
         void sendTeamView();
 
     }
+
+
 
 }

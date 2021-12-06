@@ -50,34 +50,6 @@ public class TeamsFragment extends Fragment {
         user = am.getUser();
         Log.d("demo", "onCreateView: " + user.getEmail());
 
-//        am.profile(new MainActivity.Return() {
-//            @Override
-//            public void response(@NonNull String response) {
-//
-//                GsonBuilder builder = new GsonBuilder();
-//                Gson gson = builder.create();
-//
-//                //String token = user.getToken();
-//
-//                user = gson.fromJson(response, User.class);
-//
-//                Log.d("demo", "response user: "+ user.getEmail());
-//
-//                binding.name.setText(user.getFullname());
-//                //user.setToken(token);
-//                am.setUser(user);
-//            }
-//
-//            @Override
-//            public boolean showDialog() {
-//                return false;
-//            }
-//
-//            @Override
-//            public void error(@NonNull String response) {
-//            }
-//        }, user.getEmail());
-
         binding.name.setText(user.getFullname());
 
         binding.teamView.setHasFixedSize(true);
@@ -132,7 +104,6 @@ public class TeamsFragment extends Fragment {
         void alert(String msg);
         User getUser();
         void setUser(User user);
-        void profile(MainActivity.Return response, String...data);
         void getTeams(MainActivity.Return response);
         void sendLoginView();
     }

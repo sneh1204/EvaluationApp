@@ -12,17 +12,45 @@ public class Teams implements Serializable {
     int participants;
     ArrayList<Scores> scores;
     double avgscore;
+    String examinerName;
+    int teamScore;
+
 
     public Teams() {
     }
 
-    public Teams(String _id, String teamname, String city, int participants, ArrayList<Scores> scores, double avgscore) {
+    public Teams(String teamname, String examinerName, int teamScore) {
+
+        this.teamname = teamname;
+        this.examinerName = examinerName;
+        this.teamScore = teamScore;
+    }
+
+    public Teams(String _id, String teamname, String city, int participants, ArrayList<Scores> scores, double avgscore, String examinerName, int teamScore) {
         this._id = _id;
         this.teamname = teamname;
         this.city = city;
         this.participants = participants;
         this.scores = scores;
         this.avgscore = avgscore;
+        this.examinerName = examinerName;
+        this.teamScore = teamScore;
+    }
+
+    public String getExaminerName() {
+        return examinerName;
+    }
+
+    public void setExaminerName(String examinerName) {
+        this.examinerName = examinerName;
+    }
+
+    public int getTeamScore() {
+        return teamScore;
+    }
+
+    public void setTeamScore(int teamScore) {
+        this.teamScore = teamScore;
     }
 
     public String get_id() {

@@ -29,14 +29,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.ILogin, SurveyFragment.ISurvey, ResultFragment.IResult, RegisterFragment.IRegister, TeamsFragment.ITeams, AdminLoginFragment.IAdminLogin, RegisterAdminFragment.IAdminRegister, AdminPortalFragment.IAdminPortal, ExaminerFragment.IExaminer, TeamViewFragment.ITeamView, CreateExaminerFragment.ICreateExaminer, CreateTeamFragment.ICreateTeam{
+public class MainActivity extends AppCompatActivity implements LoginFragment.ILogin, SurveyFragment.ISurvey, ResultFragment.IResult, RegisterFragment.IRegister, TeamsFragment.ITeams, AdminLoginFragment.IAdminLogin, RegisterAdminFragment.IAdminRegister, AdminPortalFragment.IAdminPortal, ExaminerFragment.IExaminer, TeamViewFragment.ITeamView, CreateExaminerFragment.ICreateExaminer, CreateTeamFragment.ICreateTeam, DetailsFragment.IDetails {
 
     private final OkHttpClient client = new OkHttpClient();
     public static final String BASE_URL  = "http://10.0.2.2:3000/";//"https://aqueous-anchorage-82599.herokuapp.com/";
-
-    ActivityMainBinding binding;
-
-   // Auth0 account;
 
     ProgressDialog dialog;
     User user = null;
@@ -46,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-      //  account = new Auth0("YQIIAQIYXOJ8t7aXeR362GZdMMnIfkzI", "dev-9glxzlwm.us.auth0.com");
         sendLoginView();
     }
 
@@ -136,6 +131,13 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
                 .commit();
     }
 
+    @Override
+    public void sendDetailsView() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerLayout, new DetailsFragment())
+                .commit();
+    }
+
     public void login(Return response, String... data){
         FormBody formBody = new FormBody.Builder()
                 .add("email", data[0])
@@ -157,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
                 .build();
         Request request = new Request.Builder()
                 .url(BASE_URL + "auth/signup")
+                .addHeader("authorization", "Bearer "+ admin.getToken())
                 .post(formBody)
                 .build();
         sendRequest(request, response);
@@ -169,13 +172,13 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
         sendRequest(request, response);
     }
 
-    public void profile(Return response, String... data){
-        FormBody formBody = new FormBody.Builder()
-                .add("email", data[0])
-                .build();
+    public void profile(Return response){
+//        FormBody formBody = new FormBody.Builder()
+//                .add("email", data[0])
+//                .build();
         Request request = new Request.Builder()
                 .url(BASE_URL + "profile/view")
-                .post(formBody)
+                .addHeader("x-jwt-token", user.getToken())
                 .build();
         sendRequest(request, response);
     }
@@ -192,6 +195,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
                 .url(BASE_URL + "update/teamscore")
                 .post(formBody)
                 .build();
+        sendRequest(request, response);
+    }
+
+    public void getAuthOLogin(Return response) {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "auth0/login")
+                .build();
+        Log.d("demo", "getAuthOLogin: " + request);
         sendRequest(request, response);
     }
 
@@ -264,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
     public void getExaminers(Return response) {
         Request request = new Request.Builder()
                 .url(BASE_URL + "examiners/getAll")
+                .addHeader("authorization", "Bearer "+ admin.getToken())
                 .build();
         sendRequest(request, response);
     }
@@ -277,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
                 .build();
         Request request = new Request.Builder()
                 .url(BASE_URL + "register/team")
+                .addHeader("authorization", "Bearer "+ admin.getToken())
                 .post(formBody)
                 .build();
         sendRequest(request, response);
