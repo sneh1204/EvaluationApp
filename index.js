@@ -15,11 +15,13 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 let auth_collection;
 let examiner_collection;
 let teams_collection;
+let admin_collection;
 
 client.connect(err => {
   auth_collection = client.db("survey").collection("auth");
   examiner_collection = client.db("survey").collection("examiner");
   teams_collection = client.db("survey").collection("teams");
+  admin_collection = client.db("survey").collection("admin");
 });
 
 
@@ -152,7 +154,7 @@ app.post("/auth/signup", async (req, res, next) => {
 
 });
 
-app.get("/teams/getAll", jwtVerificationMiddleware, async (req, res, next) => {
+app.get("/teams/getAll", async (req, res, next) => {
 
   const cursor = teams_collection.find({});
   const result = await cursor.toArray();
@@ -167,18 +169,38 @@ app.get("/teams/getAll", jwtVerificationMiddleware, async (req, res, next) => {
 
 });
 
-app.get("/profile/view", jwtVerificationMiddleware, async (req, res, next) => {
-  const profile = await profileCheck(res, req);
-  if(profile === false) return;
+app.get("/profile/view", async (req, res, next) => {
+  // const profile = await profileCheck(res, req);
+  // if(profile === false) return;
 
-  const info = profile[0];
-  info["uid"] = info["_id"]
+  // const info = profile[0];
+  // info["uid"] = info["_id"]
 
-  res.status(200).send(info);
+  // res.status(200).send(info);
 
+  //get the user data 
+  console.log(req.body["email"]);
+  examiner_collection.findOne({email: req.body["email"]}, (error, user) => {
+    if(error){
+        res.status(404).json({error: "Examiner not found"});
+
+    }else{
+      console.log(user);
+        const userJson = {
+            uid: user._id,
+            fullname: user.fullname,
+            address: user.address,
+            email: user.email,
+
+        }
+        res.status(200).send(userJson);
+        //res.status(200).json({user: userJson});
+              
+    }
+})
 });
 
-app.post("/update/teamscore", jwtVerificationMiddleware, async(req, res, next) => {
+app.post("/update/teamscore", async(req, res, next) => {
 
   const fullname = req.body["fullname"];
   const score = req.body["score"];
@@ -191,6 +213,77 @@ app.post("/update/teamscore", jwtVerificationMiddleware, async(req, res, next) =
   res.status(200).send({status:"ok"});
 
 });
+
+app.post("/auth/adminlogin", authMiddleWare, (req, res, next) => {
+ 
+  res.status(200).send({status: "ok", uid: req.body["uid"], token: fetchToken(req.body["email"], req.body["uid"]), email: req.body["email"]});
+
+});
+
+app.post("/auth/adminsignup", async (req, res, next) => {
+
+  if(!("email" in req.body) || !("pass" in req.body) || !("fullname") in req.body ){
+    res.status(401).send({message: "Email/Pass/Fullname is required to sign up!"});
+    return;
+  }
+
+  if(!validateCredentials(res, req.body['email'], req.body['pass'])) return;
+
+  const salt = bcrypt.genSaltSync(10); // hashing
+  const hash = bcrypt.hashSync(req.body["pass"], salt);
+
+  await auth_collection.insertOne({email: req.body["email"], pass: hash}, async function(err, sign_result){
+    if(err !== undefined && err.code === 11000){
+      res.status(400).send({message: "Email already registered!"});
+      return;
+    }
+    await admin_collection.insertOne({_id: sign_result.insertedId, email: req.body["email"], fullname: req.body["fullname"]});
+    res.status(200).send({status: "ok", uid: sign_result.insertedId, token: fetchToken(req.body["email"], sign_result.insertedId), email: req.body["email"]});
+
+
+  });
+
+});
+
+app.get("/examiners/getAll", async (req, res, next) => {
+
+  const cursor = examiner_collection.find({});
+  const result = await cursor.toArray();
+
+  if(result.length < 1){
+    res.status(400).send({message: "No Examiner found"});
+    return false;
+  }
+
+  console.log(result);
+  res.status(200).send(result);
+
+});
+
+app.post("/register/team", async (req, res, next) => {
+
+  if(!("teamname" in req.body) || !("city" in req.body) || !("participants") in req.body ){
+    res.status(401).send({message: "Teamname/City/Participants is required to sign up!"});
+    return;
+  }
+  teams_collection.find({"teamname": req.body["teamname"]}).count((error, number) =>{
+    if(error){
+        res.status(404).json({error: error})
+    }else{
+        if(number == 0){
+            console.log("Teamname not exists");
+            teams_collection.insertOne({teamname: req.body["teamname"], city: req.body["city"], participants: req.body["participants"]});
+            res.status(200).send({status: "ok"});
+        }else{
+          res.status(401).send({message: "Team name already exists"});
+        }
+    }
+    
+})
+
+});
+
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);  
