@@ -84,6 +84,13 @@ public class TeamsFragment extends Fragment {
             }
         });
 
+        binding.logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                am.setUser(null);
+                am.sendLoginView();
+            }
+        });
 
         return view;
     }

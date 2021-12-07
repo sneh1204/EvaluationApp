@@ -15,6 +15,8 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -63,6 +65,13 @@ public class ResultFragment extends Fragment {
 
                 ArrayList<Teams> teamsArrayList = new ArrayList<>(Arrays.asList(teams));
 
+                Collections.sort(teamsArrayList, new Comparator<Teams>() {
+                    @Override
+                    public int compare(Teams c1, Teams c2) {
+                        return Double.compare(c1.getAvgscore(), c2.getAvgscore());
+                    }
+                });
+                Collections.reverse(teamsArrayList);
                 binding.resultView.setAdapter(new ResultAdapter(user, teamsArrayList));
             }
 

@@ -95,6 +95,7 @@ public class AdminLoginFragment extends Fragment {
                     public void onSuccess(@Nullable final Credentials credentials) {
                         String accessToken = credentials.getAccessToken();
                         String token = credentials.getIdToken();
+                        Log.d("demo", "onSuccess: Token " + token);
                         showUserProfile(accessToken, token);
                         am.sendAdminPortalView();
                     }
