@@ -188,8 +188,8 @@ const jwtVerificationMiddleware = async (req, res, next) => {
 
 app.post("/auth/signup", checkJwt, async (req, res, next) => {
 
-  if(!("email" in req.body) || !("pass" in req.body) || !("fullname") in req.body || !("address") in req.body){
-    res.status(401).send({message: "Email/Pass/Fullname/Address is required to sign up!"});
+  if(!("email" in req.body) || !("pass" in req.body) || !("fullname") in req.body || !("address") in req.body || !("phone") in req.body ){
+    res.status(401).send({message: "Email/Pass/Fullname/Address/Phone is required to sign up!"});
     return;
   }
 
@@ -203,7 +203,7 @@ app.post("/auth/signup", checkJwt, async (req, res, next) => {
       res.status(400).send({message: "Email already registered!"});
       return;
     }
-    await examiner_collection.insertOne({_id: sign_result.insertedId, email: req.body["email"], fullname: req.body["fullname"], address: req.body["address"]});
+    await examiner_collection.insertOne({_id: sign_result.insertedId, email: req.body["email"], fullname: req.body["fullname"], address: req.body["address"], phone: req.body["phone"]});
     res.status(200).send({status: "ok", uid: sign_result.insertedId, email: req.body["email"]});
 
 
@@ -214,15 +214,29 @@ app.post("/auth/signup", checkJwt, async (req, res, next) => {
 app.get("/examiners/getAll", checkJwt, async (req, res, next) => {
 
   const cursor = examiner_collection.find({});
-  const result = await cursor.toArray();
+  await cursor.toArray( (error, result) =>{
+    //console.log(result);
+    if (!error) {
+      console.log("Operation completed successfully");
+      if(result.length < 1){
+      res.status(400).send({message: "No Examiner found"});
+      return false;
+    }
 
-  if(result.length < 1){
-    res.status(400).send({message: "No Examiner found"});
-    return false;
-  }
+    console.log(result);
+    res.status(200).send(result);
+    } else {
+      console.log(`An error occurred: ${error}`);
+    }
+  });
 
-  console.log(result);
-  res.status(200).send(result);
+  // if(result.length < 1){
+  //   res.status(400).send({message: "No Examiner found"});
+  //   return false;
+  // }
+
+  // console.log(result);
+  // res.status(200).send(result);
 
 });
 
