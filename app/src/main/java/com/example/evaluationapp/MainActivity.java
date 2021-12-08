@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.ILo
                 .add("address", data[1])
                 .add("email", data[2])
                 .add("pass", data[3])
+                .add("phone", data[4])
                 .build();
         Request request = new Request.Builder()
                 .url(BASE_URL + "auth/signup")
