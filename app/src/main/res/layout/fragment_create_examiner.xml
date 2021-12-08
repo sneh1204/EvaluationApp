@@ -75,6 +75,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext5" />
 
+    <EditText
+        android:id="@+id/phoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:fontFamily="sans-serif-medium"
+        android:hint="Phone"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edittext6" />
+
 
     <Button
         android:id="@+id/registerButtonId"
@@ -85,7 +102,7 @@
         android:layout_marginTop="32dp"
         android:text="register"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittext6" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumber" />
 
     <Button
         android:id="@+id/cancelButtonId"
@@ -100,7 +117,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/registerButtonId"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/registerButtonId"
-        app:layout_constraintTop_toBottomOf="@+id/edittext6" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumber" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

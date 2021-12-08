@@ -3,7 +3,7 @@ package com.example.evaluationapp;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String uid, customerId, token, fullname, email, address;
+    private String uid, customerId, token, fullname, email, address, phone;
 
     public User() {
 
@@ -57,6 +57,14 @@ public class User implements Serializable {
         this.address = address;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -64,8 +72,9 @@ public class User implements Serializable {
                 ", customerId='" + customerId + '\'' +
                 ", token='" + token + '\'' +
                 ", fullname='" + fullname + '\'' +
-                ", address='" + address + '\'' +
                 ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
                 '}';
     }
 }
